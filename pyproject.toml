@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "column-semantics"
+version = "0.1.0"
+description = "Semantic inference of column meanings for data engineering workflows"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+{ name = "Santiago Lanz" }
+]
+keywords = [
+"data-engineering",
+"metadata",
+"schema",
+"data-quality",
+"data-governance"
+]
+classifiers = [
+"Programming Language :: Python :: 3",
+"License :: OSI Approved :: MIT License",
+"Operating System :: OS Independent",
+]
+
+
+[project.dependencies]
+pyyaml = ">=6.0"
+
+
+[project.optional-dependencies]
+dev = [
+"pytest",
+"black",
+"ruff"
+]
+
+
+[tool.setuptools.packages.find]
+where = ["."]
