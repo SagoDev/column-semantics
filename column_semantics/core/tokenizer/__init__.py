@@ -1,5 +1,5 @@
 """Tokenizer Package"""
 
-from .tokenizer import ColumnTokenizer
+from .tokenizer import Tokenizer
 
-__all__ = ["ColumnTokenizer"]
+__all__ = ["Tokenizer"]

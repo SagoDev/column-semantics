@@ -4,7 +4,7 @@ import re
 from typing import List
 
 
-class ColumnTokenizer:
+class Tokenizer:
     """
     Splits a column name into raw tokens based on naming conventions.
     """
