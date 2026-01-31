@@ -1,0 +1,11 @@
+created:
+  meaning: "Creation time of the record"
+  role: "timestamp"
+
+updated:
+  meaning: "Last update time of the record"
+  role: "timestamp"
+
+deleted:
+  meaning: "Soft delete timestamp"
+  role: "timestamp"

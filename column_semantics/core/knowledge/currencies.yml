@@ -1,0 +1,13 @@
+usd:
+  meaning: "United States Dollar"
+  symbol: "$"
+
+eur:
+  meaning: "Euro"
+  symbol: "€"
+
+ars:
+  meaning: "Argentine Peso"
+
+clp:
+  meaning: "Chilean Peso"

@@ -1,0 +1,65 @@
+# Generic technical noise
+generic:
+  - col
+  - column
+  - field
+  - value
+  - val
+  - data
+  - info
+  - attr
+  - attribute
+
+# Table / source references
+source:
+  - tbl
+  - table
+  - src
+  - source
+  - raw
+  - stg
+  - stage
+  - staging
+  - tmp
+  - temp
+  - derived
+
+# System / ingestion artifacts
+system:
+  - sys
+  - system
+  - ingest
+  - ingestion
+  - load
+  - extract
+  - etl
+  - elt
+  - pipeline
+  - proc
+  - process
+  - job
+  - batch
+
+# Indexing / ordering noise
+ordering:
+  - idx
+  - index
+  - seq
+  - sequence
+  - order
+  - ord
+  - pos
+  - position
+
+# Redundant time words (when already handled semantically)
+time_noise:
+  - time
+  - datetime
+  - timestamp
+
+# Common suffixes/prefixes with no semantic meaning
+format_noise:
+  - txt
+  - str
+  - num
+  - char

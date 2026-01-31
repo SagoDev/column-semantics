@@ -1,0 +1,27 @@
+identifier:
+  description: "Unique identifier for an entity"
+  common_patterns:
+    - "_id"
+    - "id_"
+
+foreign_key:
+  description: "Reference to another entity"
+  common_patterns:
+    - "_id"
+
+metric:
+  description: "Numeric value used for measurement or aggregation"
+
+flag:
+  description: "Boolean indicator"
+  common_patterns:
+    - "is_"
+    - "has_"
+    - "_flag"
+
+timestamp:
+  description: "Date and time related field"
+  common_patterns:
+    - "_at"
+    - "_ts"
+    - "_dt"

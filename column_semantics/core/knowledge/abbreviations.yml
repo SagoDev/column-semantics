@@ -1,0 +1,42 @@
+id:
+  meaning: "identifier"
+  role: "identifier"
+
+amt:
+  meaning: "amount"
+  data_type: "decimal"
+  role: "metric"
+
+qty:
+  meaning: "quantity"
+  data_type: "integer"
+  role: "metric"
+
+cnt:
+  meaning: "count"
+  data_type: "integer"
+  role: "metric"
+
+dt:
+  meaning: "date"
+  data_type: "date"
+
+ts:
+  meaning: "timestamp"
+  data_type: "timestamp"
+
+num:
+  meaning: "number"
+  data_type: "numeric"
+
+avg:
+  meaning: "average"
+  role: "metric"
+
+min:
+  meaning: "minimum"
+  role: "metric"
+
+max:
+  meaning: "maximum"
+  role: "metric"

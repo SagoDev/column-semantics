@@ -1,0 +1,21 @@
+boolean:
+  python: "bool"
+  notes:
+    - "Often derived from flags or status fields"
+
+integer:
+  python: "int"
+
+decimal:
+  python: "Decimal"
+  notes:
+    - "Recommended for financial calculations"
+
+string:
+  python: "str"
+
+date:
+  python: "date"
+
+timestamp:
+  python: "datetime"
