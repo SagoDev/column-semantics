@@ -5,7 +5,7 @@ Knowledge loader for semantic inference.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Set
 
 import yaml
 
@@ -33,13 +33,15 @@ class KnowledgeBase:
         self.stopwords = stopwords
 
     @property
-    def flat_stopwords(self) -> set[str]:
+    def flat_stopwords(self) -> Set[str]:
         """
         Flatten categorized stopwords into a single set.
         """
-        words: set[str] = set()
+        words: Set[str] = set()
+
         for group in self.stopwords.values():
             words.update(group)
+
         return words
 
     @classmethod
