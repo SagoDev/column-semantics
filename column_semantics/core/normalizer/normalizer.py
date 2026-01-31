@@ -3,7 +3,7 @@
 from typing import Iterable, List, Set
 
 
-class TokenNormalizer:
+class Normalizer:
     """
     Normalizes raw tokens into a canonical form suitable for semantic inference.
     """

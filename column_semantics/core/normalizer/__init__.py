@@ -1,5 +1,5 @@
 """Normalizer Package"""
 
-from .normalizer import TokenNormalizer
+from .normalizer import Normalizer
 
-__all__ = ["TokenNormalizer"]
+__all__ = ["Normalizer"]
