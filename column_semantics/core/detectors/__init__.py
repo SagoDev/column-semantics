@@ -4,5 +4,12 @@ from .abbreviation_detector import AbbreviationDetector
 from .currency_detector import CurrencyDetector
 from .role_detector import RoleDetector
 from .date_detector import DateDetector
+from .datatype_detector import DataTypeDetector
 
-__all__ = ["AbbreviationDetector", "CurrencyDetector", "RoleDetector", "DateDetector"]
+__all__ = [
+    "AbbreviationDetector",
+    "CurrencyDetector",
+    "RoleDetector",
+    "DateDetector",
+    "DataTypeDetector",
+]
