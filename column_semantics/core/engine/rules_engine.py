@@ -1,13 +1,10 @@
 """
-Rules engine for semantic inference based on declarative YAML rules.
+Rules engine for semantic inference based on declarative rules.
 """
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any, Dict, List
-
-import yaml
 
 from column_semantics.core.engine.confidence_engine import ConfidenceEngine
 from column_semantics.core.models.output_models import SemanticHypothesis
@@ -21,10 +18,13 @@ class RulesEngine:
     def __init__(
         self,
         *,
-        rules_path: Path,
+        rules: List[Dict[str, Any]],
         confidence_engine: ConfidenceEngine | None = None,
     ) -> None:
-        self._rules = self._load_rules(rules_path)
+        if not rules:
+            raise ValueError("RulesEngine initialized with empty rules")
+
+        self._rules = rules
         self._confidence_engine = confidence_engine or ConfidenceEngine()
 
     # ---------------- public API ---------------- #
@@ -156,18 +156,3 @@ class RulesEngine:
                     evidence.append(signal)
 
         return evidence
-
-    # ---------------- loading ---------------- #
-
-    @staticmethod
-    def _load_rules(path: Path) -> List[Dict[str, Any]]:
-        if not path.exists():
-            raise FileNotFoundError(f"Rules file not found: {path}")
-
-        with path.open("r", encoding="utf-8") as f:
-            rules = yaml.safe_load(f)
-
-        if not isinstance(rules, list):
-            raise ValueError("Rules YAML must be a list of rules")
-
-        return rules
