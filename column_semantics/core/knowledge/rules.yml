@@ -3,6 +3,9 @@
 - label: identifier
   description: Unique identifier column
   priority: 100
+  priority_real:
+    level: critical
+    rationale: Core entity identifier; incorrect handling breaks joins and integrity
   min_signals: 1
   when:
     any:
@@ -14,6 +17,14 @@
     any:
       - signal: abbreviation
         in: [flag, is, has, date, time, status]
+  recommended_treatment:
+    - do_not_transform
+    - candidate_primary_key
+  expected_conditions:
+    - not_null
+    - unique
+    - stable_over_time
+
 
 
 # ---------------- DATES & TIME ---------------- #
@@ -21,6 +32,9 @@
 - label: date
   description: Date column
   priority: 90
+  priority_real:
+    level: medium
+    rationale: Temporal reference; important for analytics but not entity-defining
   min_signals: 1
   when:
     any:
@@ -31,10 +45,17 @@
     any:
       - signal: abbreviation
         in: [status, type, flag]
+  recommended_treatment:
+    - normalize_date_format
+  expected_conditions:
+    - not_null
 
 - label: timestamp
   description: Timestamp column
   priority: 95
+  priority_real:
+    level: medium
+    rationale: Event timing; required for ordering and time-based logic
   min_signals: 1
   when:
     any:
@@ -46,6 +67,11 @@
     any:
       - signal: abbreviation
         in: [status, type, flag]
+  recommended_treatment:
+    - enforce_timezone
+  expected_conditions:
+    - not_null
+
 
 
 # ---------------- MONETARY ---------------- #
@@ -53,6 +79,9 @@
 - label: monetary_amount
   description: Monetary amount column
   priority: 90
+  priority_real:
+    level: high
+    rationale: Financial values; incorrect handling leads to reporting errors
   min_signals: 2
   when:
     all:
@@ -63,6 +92,12 @@
     any:
       - signal: abbreviation
         in: [count, qty, number, flag, is]
+  recommended_treatment:
+    - normalize_decimal_format
+    - preserve_precision
+  expected_conditions:
+    - not_null
+
 
 
 # ---------------- METRICS ---------------- #
@@ -70,6 +105,9 @@
 - label: metric
   description: Numeric business metric
   priority: 80
+  priority_real:
+    level: medium
+    rationale: Analytical measure; errors affect insights but not structural integrity
   min_signals: 2
   when:
     any:
@@ -80,6 +118,12 @@
   not:
     any:
       - signal: currency
+  recommended_treatment:
+    - validate_numeric
+  expected_conditions:
+    - not_null
+
+      - signal: currency
 
 
 # ---------------- FLAGS / BOOLEANS ---------------- #
@@ -87,6 +131,9 @@
 - label: flag
   description: Boolean flag column
   priority: 70
+  priority_real:
+    level: medium
+    rationale: Logical switches; misinterpretation impacts business rules
   min_signals: 2
   when:
     any:
@@ -98,6 +145,10 @@
     any:
       - signal: abbreviation
         in: [id, uuid, key]
+  recommended_treatment:
+    - cast_to_boolean
+  expected_conditions:
+    - not_null
 
 
 # ---------------- CATEGORICAL ---------------- #
@@ -105,6 +156,9 @@
 - label: category
   description: Categorical column
   priority: 60
+  priority_real:
+    level: low
+    rationale: Classification aid; low structural risk
   min_signals: 2
   when:
     any:
@@ -116,13 +170,17 @@
     any:
       - signal: date
       - signal: currency
+  recommended_treatment:
+    - standardize_values
 
 
 # ---------------- TEXT / DESCRIPTION ---------------- #
-
 - label: text
   description: Free text column
   priority: 50
+  priority_real:
+    level: low
+    rationale: Descriptive content; minimal structural impact
   min_signals: 1
   when:
     any:
@@ -132,6 +190,8 @@
     any:
       - signal: currency
       - signal: date
+  recommended_treatment:
+    - trim_whitespace
 
 
 # ---------------- GEO ---------------- #
@@ -172,6 +232,9 @@
 - label: email
   description: Email address column
   priority: 85
+  priority_real:
+    level: high
+    rationale: Personal identifier; privacy and correctness are critical
   min_signals: 1
   when:
     any:
@@ -181,10 +244,18 @@
     any:
       - signal: abbreviation
         in: [flag, is]
+  recommended_treatment:
+    - normalize_case
+  expected_conditions:
+    - valid_format
+
 
 - label: phone
   description: Phone number column
   priority: 80
+  priority_real:
+    level: high
+    rationale: Personal contact data; sensitive to formatting errors
   min_signals: 1
   when:
     any:
@@ -194,3 +265,6 @@
     any:
       - signal: abbreviation
         in: [flag, is]
+  recommended_treatment:
+    - normalize_phone_format
+

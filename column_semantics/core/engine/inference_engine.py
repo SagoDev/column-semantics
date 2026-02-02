@@ -37,9 +37,9 @@ class InferenceEngine:
         """
         Infer semantic hypotheses for a column using declarative rules.
         """
-        hypotheses = self._rules_engine.evaluate(signals=signals)
+        raw_hypotheses = self._rules_engine.evaluate(signals=signals)
 
-        hypotheses = self._post_process(hypotheses)
+        hypotheses = self._post_process(raw_hypotheses)
 
         return InferenceResult(
             column_name=column_name,
@@ -53,18 +53,35 @@ class InferenceEngine:
         hypotheses: List[SemanticHypothesis],
     ) -> List[SemanticHypothesis]:
         """
-        Sort, deduplicate and prioritize hypotheses.
+        Deduplicate hypotheses by label keeping the strongest one
+        based on priority and confidence.
         """
-        # Deduplicate by label keeping highest confidence
         unique: dict[str, SemanticHypothesis] = {}
 
         for hypothesis in hypotheses:
             existing = unique.get(hypothesis.label)
-            if existing is None or hypothesis.confidence > existing.confidence:
+
+            if existing is None:
+                unique[hypothesis.label] = hypothesis
+                continue
+
+            existing_key = (
+                existing.priority or 0,
+                existing.confidence,
+            )
+            new_key = (
+                hypothesis.priority or 0,
+                hypothesis.confidence,
+            )
+
+            if new_key > existing_key:
                 unique[hypothesis.label] = hypothesis
 
         return sorted(
             unique.values(),
-            key=lambda h: h.confidence,
+            key=lambda h: (
+                h.priority or 0,
+                h.confidence,
+            ),
             reverse=True,
         )
