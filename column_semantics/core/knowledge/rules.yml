@@ -17,13 +17,23 @@
     any:
       - signal: abbreviation
         in: [flag, is, has, date, time, status]
+
+
   recommended_treatment:
-    - do_not_transform
-    - candidate_primary_key
+    - treat_as_primary_key
+    - enforce_uniqueness
+    - index_column
+    - avoid_aggregations
+
   expected_conditions:
-    - not_null
-    - unique
-    - stable_over_time
+    - values_should_be_unique
+    - values_should_not_be_null
+    - values_should_be_stable_over_time
+    - enforce_consistent_formatting
+    - avoid_numeric_operations
+    - enforce_length_limits_if_applicable
+    - avoid_special_characters_if_needed
+    - values_should_be_consistent_across_datasets
 
 
 
@@ -45,10 +55,18 @@
     any:
       - signal: abbreviation
         in: [status, type, flag]
+
   recommended_treatment:
-    - normalize_date_format
+    - parse_as_date
+    - standardize_format
+    - enable_time_filtering
+    - ensure_consistent_timezone_handling
+
   expected_conditions:
-    - not_null
+    - values_should_be_valid_dates
+    - timezone_should_be_defined_or_implicit
+    - enforce_date_ranges_if_applicable
+    - handle_null_dates_appropriately
 
 - label: timestamp
   description: Timestamp column
@@ -67,11 +85,18 @@
     any:
       - signal: abbreviation
         in: [status, type, flag]
-  recommended_treatment:
-    - enforce_timezone
-  expected_conditions:
-    - not_null
 
+  recommended_treatment:
+    - parse_as_timestamp
+    - use_for_event_ordering
+    - enable_time_windowing
+    - ensure_high_precision_if_needed
+
+  expected_conditions:
+    - values_should_be_valid_timestamps
+    - monotonicity_may_be_expected
+    - timezone_should_be_defined_or_implicit
+    - enforce_high_precision_if_needed
 
 
 # ---------------- MONETARY ---------------- #
@@ -92,13 +117,19 @@
     any:
       - signal: abbreviation
         in: [count, qty, number, flag, is]
+
   recommended_treatment:
-    - normalize_decimal_format
-    - preserve_precision
+  - parse_as_decimal
+  - attach_currency_metadata
+  - avoid_float_precision
+  - enable_sum_aggregation
+
   expected_conditions:
-    - not_null
-
-
+    - values_should_be_numeric
+    - currency_should_be_consistent
+    - handle_negative_values_appropriately
+    - enforce_value_ranges_if_applicable
+|
 
 # ---------------- METRICS ---------------- #
 
@@ -118,13 +149,18 @@
   not:
     any:
       - signal: currency
+
   recommended_treatment:
-    - validate_numeric
+    - parse_as_numeric
+    - enable_aggregation
+    - use_in_kpis
+    - normalize_if_needed
+
   expected_conditions:
-    - not_null
-
-      - signal: currency
-
+    - values_should_be_numeric
+    - values_should_not_be_text
+    - handle_outliers_appropriately
+    - enforce_value_ranges_if_applicable
 
 # ---------------- FLAGS / BOOLEANS ---------------- #
 
@@ -145,11 +181,18 @@
     any:
       - signal: abbreviation
         in: [id, uuid, key]
-  recommended_treatment:
-    - cast_to_boolean
-  expected_conditions:
-    - not_null
 
+  recommended_treatment:
+    - parse_as_boolean
+    - avoid_text_representation
+    - use_for_filtering
+    - enforce_binary_values
+
+  expected_conditions:
+    - values_should_be_boolean_like
+    - domain_should_be_small
+    - enforce_consistent_representation
+    - values_can_be_nullable
 
 # ---------------- CATEGORICAL ---------------- #
 
@@ -170,8 +213,21 @@
     any:
       - signal: date
       - signal: currency
+
   recommended_treatment:
-    - standardize_values
+    - treat_as_categorical
+    - encode_as_enum
+    - avoid_numeric_operations
+    - use_for_grouping
+
+
+  expected_conditions:
+    - domain_should_be_limited
+    - values_should_be_consistent
+    - avoid_special_characters_if_needed
+    - enforce_length_limits_if_applicable
+    - values_can_be_nullable
+
 
 
 # ---------------- TEXT / DESCRIPTION ---------------- #
@@ -190,8 +246,17 @@
     any:
       - signal: currency
       - signal: date
+
   recommended_treatment:
-    - trim_whitespace
+    - treat_as_free_text
+    - exclude_from_grouping
+    - avoid_indexing_for_metrics
+
+  expected_conditions:
+    - values_can_be_nullable
+    - values_are_not_structured
+    - enforce_length_limits_if_applicable
+    - avoid_special_characters_if_needed
 
 
 # ---------------- GEO ---------------- #
@@ -226,6 +291,17 @@
       - signal: abbreviation
         in: [code, id]
 
+  recommended_treatment:
+    - treat_as_geographical
+    - enable_location_filtering
+    - integrate_with_mapping_tools
+    - avoid_numeric_operations
+
+  expected_conditions:
+    - values_should_be_valid_locations
+    - values_should_not_be_numeric
+    - values_should_not_be_null
+    - enforce_consistency_in_spelling
 
 # ---------------- CONTACT ---------------- #
 
@@ -244,11 +320,18 @@
     any:
       - signal: abbreviation
         in: [flag, is]
-  recommended_treatment:
-    - normalize_case
-  expected_conditions:
-    - valid_format
 
+  recommended_treatment:
+    - parse_as_email
+    - validate_email_format
+    - mask_for_privacy
+    - avoid_unencrypted_storage
+  
+  expected_conditions:
+    - values_should_be_valid_emails
+    - values_should_not_be_null
+    - enforce_uniqueness_if_required
+    
 
 - label: phone
   description: Phone number column
@@ -265,6 +348,14 @@
     any:
       - signal: abbreviation
         in: [flag, is]
-  recommended_treatment:
-    - normalize_phone_format
 
+  recommended_treatment:
+    - parse_as_phone_number
+    - standardize_format
+    - mask_for_privacy
+    - avoid_unencrypted_storage
+  
+  expected_conditions:
+    - values_should_be_valid_phone_numbers
+    - values_should_not_be_null
+    - enforce_uniqueness_if_required
