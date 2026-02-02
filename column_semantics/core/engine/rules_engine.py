@@ -24,8 +24,8 @@ class RulesEngine:
         rules_path: Path,
         confidence_engine: ConfidenceEngine | None = None,
     ) -> None:
-        self.rules = self._load_rules(rules_path)
-        self.confidence_engine = confidence_engine or ConfidenceEngine()
+        self._rules = self._load_rules(rules_path)
+        self._confidence_engine = confidence_engine or ConfidenceEngine()
 
     # ---------------- public API ---------------- #
 
@@ -39,16 +39,19 @@ class RulesEngine:
         """
         hypotheses: List[SemanticHypothesis] = []
 
-        for rule in self.rules:
-            if self._rule_matches(rule, signals):
-                evidence = self._collect_evidence(rule, signals)
-                hypotheses.append(
-                    SemanticHypothesis(
-                        label=rule["label"],
-                        evidence=evidence,
-                        confidence=self.confidence_engine.score(evidence),
-                    )
+        for rule in self._rules:
+            if not self._rule_matches(rule, signals):
+                continue
+
+            evidence = self._collect_evidence(rule, signals)
+
+            hypotheses.append(
+                SemanticHypothesis(
+                    label=rule["label"],
+                    evidence=evidence,
+                    confidence=self._confidence_engine.score(evidence),
                 )
+            )
 
         return hypotheses
 
@@ -59,13 +62,33 @@ class RulesEngine:
         rule: Dict[str, Any],
         signals: List[Dict[str, Any]],
     ) -> bool:
-        conditions = rule.get("when", {})
+        when_block = rule.get("when", {})
+        not_block = rule.get("not")
 
+        if not self._match_conditions(when_block, signals):
+            return False
+
+        if not_block and self._match_conditions(not_block, signals):
+            return False
+
+        return True
+
+    def _match_conditions(
+        self,
+        conditions: Dict[str, Any],
+        signals: List[Dict[str, Any]],
+    ) -> bool:
         if "all" in conditions:
-            return all(self._condition_matches(c, signals) for c in conditions["all"])
+            return all(
+                self._condition_matches(condition, signals)
+                for condition in conditions["all"]
+            )
 
         if "any" in conditions:
-            return any(self._condition_matches(c, signals) for c in conditions["any"])
+            return any(
+                self._condition_matches(condition, signals)
+                for condition in conditions["any"]
+            )
 
         return False
 
@@ -86,7 +109,7 @@ class RulesEngine:
             if "in" in condition and signal.get("value") in condition["in"]:
                 return True
 
-            if len(condition.keys()) == 1:  # only 'signal'
+            if len(condition) == 1:  # only 'signal'
                 return True
 
         return False
@@ -101,21 +124,22 @@ class RulesEngine:
         """
         Collect all signals used as evidence for a matched rule.
         """
-        used_signals: List[Dict[str, Any]] = []
+        evidence: List[Dict[str, Any]] = []
 
-        conditions = rule.get("when", {})
-        condition_blocks = conditions.get("all") or conditions.get("any") or []
+        when_block = rule.get("when", {})
+        condition_blocks = when_block.get("all") or when_block.get("any") or []
 
         for condition in condition_blocks:
             for signal in signals:
                 if signal.get("type") == condition.get("signal"):
-                    used_signals.append(signal)
+                    evidence.append(signal)
 
-        return used_signals
+        return evidence
 
     # ---------------- loading ---------------- #
 
-    def _load_rules(self, path: Path) -> List[Dict[str, Any]]:
+    @staticmethod
+    def _load_rules(path: Path) -> List[Dict[str, Any]]:
         if not path.exists():
             raise FileNotFoundError(f"Rules file not found: {path}")
 

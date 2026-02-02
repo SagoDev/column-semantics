@@ -9,6 +9,10 @@
         in: [id, uuid, key, pk]
       - signal: role
         equals: identifier
+  not:
+    any:
+      - signal: abbreviation
+        in: [flag, is, has, date, time, status]
 
 
 # ---------------- DATES & TIME ---------------- #
@@ -21,6 +25,10 @@
       - signal: date
       - signal: abbreviation
         in: [date, dt, created, updated]
+  not:
+    any:
+      - signal: abbreviation
+        in: [status, type, flag]
 
 - label: timestamp
   description: Timestamp column
@@ -31,6 +39,10 @@
         in: [timestamp, ts, created_at, updated_at]
       - signal: date
         equals: timestamp
+  not:
+    any:
+      - signal: abbreviation
+        in: [status, type, flag]
 
 
 # ---------------- MONETARY ---------------- #
@@ -43,6 +55,10 @@
       - signal: currency
       - signal: abbreviation
         in: [amount, price, total, cost, revenue]
+  not:
+    any:
+      - signal: abbreviation
+        in: [count, qty, number, flag, is]
 
 
 # ---------------- METRICS ---------------- #
@@ -56,6 +72,9 @@
         in: [count, qty, quantity, number, total]
       - signal: role
         equals: metric
+  not:
+    any:
+      - signal: currency
 
 
 # ---------------- FLAGS / BOOLEANS ---------------- #
@@ -69,6 +88,10 @@
         in: [is, has, flag, active, enabled]
       - signal: role
         equals: flag
+  not:
+    any:
+      - signal: abbreviation
+        in: [id, uuid, key]
 
 
 # ---------------- CATEGORICAL ---------------- #
@@ -82,6 +105,10 @@
         in: [type, category, status, level, group]
       - signal: role
         equals: category
+  not:
+    any:
+      - signal: date
+      - signal: currency
 
 
 # ---------------- TEXT / DESCRIPTION ---------------- #
@@ -93,6 +120,10 @@
     any:
       - signal: abbreviation
         in: [description, desc, comment, notes, remarks]
+  not:
+    any:
+      - signal: currency
+      - signal: date
 
 
 # ---------------- GEO ---------------- #
@@ -106,6 +137,10 @@
         in: [country, nation]
       - signal: role
         equals: country
+  not:
+    any:
+      - signal: abbreviation
+        in: [code, id]
 
 - label: geo_city
   description: City column
@@ -116,6 +151,10 @@
         in: [city, town]
       - signal: role
         equals: city
+  not:
+    any:
+      - signal: abbreviation
+        in: [code, id]
 
 
 # ---------------- CONTACT ---------------- #
@@ -127,6 +166,10 @@
     any:
       - signal: abbreviation
         in: [email, mail]
+  not:
+    any:
+      - signal: abbreviation
+        in: [flag, is]
 
 - label: phone
   description: Phone number column
@@ -135,3 +178,7 @@
     any:
       - signal: abbreviation
         in: [phone, mobile, cellphone]
+  not:
+    any:
+      - signal: abbreviation
+        in: [flag, is]
