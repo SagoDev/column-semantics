@@ -1,0 +1,137 @@
+# ---------------- IDENTIFIERS ---------------- #
+
+- label: identifier
+  description: Unique identifier column
+  priority: 100
+  when:
+    any:
+      - signal: abbreviation
+        in: [id, uuid, key, pk]
+      - signal: role
+        equals: identifier
+
+
+# ---------------- DATES & TIME ---------------- #
+
+- label: date
+  description: Date column
+  priority: 90
+  when:
+    any:
+      - signal: date
+      - signal: abbreviation
+        in: [date, dt, created, updated]
+
+- label: timestamp
+  description: Timestamp column
+  priority: 95
+  when:
+    any:
+      - signal: abbreviation
+        in: [timestamp, ts, created_at, updated_at]
+      - signal: date
+        equals: timestamp
+
+
+# ---------------- MONETARY ---------------- #
+
+- label: monetary_amount
+  description: Monetary amount column
+  priority: 90
+  when:
+    all:
+      - signal: currency
+      - signal: abbreviation
+        in: [amount, price, total, cost, revenue]
+
+
+# ---------------- METRICS ---------------- #
+
+- label: metric
+  description: Numeric business metric
+  priority: 80
+  when:
+    any:
+      - signal: abbreviation
+        in: [count, qty, quantity, number, total]
+      - signal: role
+        equals: metric
+
+
+# ---------------- FLAGS / BOOLEANS ---------------- #
+
+- label: flag
+  description: Boolean flag column
+  priority: 70
+  when:
+    any:
+      - signal: abbreviation
+        in: [is, has, flag, active, enabled]
+      - signal: role
+        equals: flag
+
+
+# ---------------- CATEGORICAL ---------------- #
+
+- label: category
+  description: Categorical column
+  priority: 60
+  when:
+    any:
+      - signal: abbreviation
+        in: [type, category, status, level, group]
+      - signal: role
+        equals: category
+
+
+# ---------------- TEXT / DESCRIPTION ---------------- #
+
+- label: text
+  description: Free text column
+  priority: 50
+  when:
+    any:
+      - signal: abbreviation
+        in: [description, desc, comment, notes, remarks]
+
+
+# ---------------- GEO ---------------- #
+
+- label: geo_country
+  description: Country column
+  priority: 85
+  when:
+    any:
+      - signal: abbreviation
+        in: [country, nation]
+      - signal: role
+        equals: country
+
+- label: geo_city
+  description: City column
+  priority: 80
+  when:
+    any:
+      - signal: abbreviation
+        in: [city, town]
+      - signal: role
+        equals: city
+
+
+# ---------------- CONTACT ---------------- #
+
+- label: email
+  description: Email address column
+  priority: 85
+  when:
+    any:
+      - signal: abbreviation
+        in: [email, mail]
+
+- label: phone
+  description: Phone number column
+  priority: 80
+  when:
+    any:
+      - signal: abbreviation
+        in: [phone, mobile, cellphone]
