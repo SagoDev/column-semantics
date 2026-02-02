@@ -54,34 +54,31 @@ class InferenceEngine:
     ) -> List[SemanticHypothesis]:
         """
         Deduplicate hypotheses by label keeping the strongest one
-        based on priority and confidence.
+        based on rule priority and confidence.
         """
         unique: dict[str, SemanticHypothesis] = {}
+
+        def strength(h: SemanticHypothesis) -> tuple[int, float]:
+            """
+            Strength ordering for hypotheses.
+
+            Resolution order:
+            1. Rule priority
+            2. Confidence
+            """
+            return (
+                h.rule.priority if h.rule.priority is not None else 0,
+                h.confidence,
+            )
 
         for hypothesis in hypotheses:
             existing = unique.get(hypothesis.label)
 
-            if existing is None:
-                unique[hypothesis.label] = hypothesis
-                continue
-
-            existing_key = (
-                existing.priority or 0,
-                existing.confidence,
-            )
-            new_key = (
-                hypothesis.priority or 0,
-                hypothesis.confidence,
-            )
-
-            if new_key > existing_key:
+            if existing is None or strength(hypothesis) > strength(existing):
                 unique[hypothesis.label] = hypothesis
 
         return sorted(
             unique.values(),
-            key=lambda h: (
-                h.priority or 0,
-                h.confidence,
-            ),
+            key=strength,
             reverse=True,
         )

@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from column_semantics.core.engine.confidence_engine import ConfidenceEngine
-from column_semantics.core.models.output_models import SemanticHypothesis
+from column_semantics.core.models.output_models import SemanticHypothesis, RuleMatch
 
 
 class RulesEngine:
@@ -35,8 +35,9 @@ class RulesEngine:
         signals: List[Dict[str, Any]],
     ) -> List[SemanticHypothesis]:
         """
-        Evaluate all rules against the provided signals and return semantic hypotheses.
+        Evaluate rules against provided signals to infer semantic hypotheses.
         """
+
         hypotheses: List[SemanticHypothesis] = []
 
         for rule in self._rules:
@@ -49,32 +50,32 @@ class RulesEngine:
             if min_signals is not None and len(evidence) < min_signals:
                 continue
 
+            rule_match = RuleMatch(
+                label=rule["label"],
+                description=rule.get("description"),
+                priority=rule.get("priority"),
+                priority_real=rule.get("priority_real"),
+                evidence=evidence,
+                expected_conditions=rule.get("expected_conditions", []),
+                recommended_treatment=rule.get("recommended_treatment", []),
+            )
+
             hypotheses.append(
                 SemanticHypothesis(
                     label=rule["label"],
-                    evidence=evidence,
                     confidence=self._confidence_engine.score(evidence),
-                    # ---- enrichment ----
-                    priority=rule.get("priority"),
-                    priority_real=rule.get("priority_real"),
-                    description=rule.get("description"),
-                    recommended_treatment=rule.get("recommended_treatment", []),
-                    expected_conditions=rule.get("expected_conditions", []),
+                    rule=rule_match,
                 )
             )
 
-        # Orden final:
-        # 1. priority (técnica)
-        # 2. confidence
-        hypotheses.sort(
+        return sorted(
+            hypotheses,
             key=lambda h: (
-                h.priority or 0,
+                h.rule.priority or 0,
                 h.confidence,
             ),
             reverse=True,
         )
-
-        return hypotheses
 
     # ---------------- rule evaluation ---------------- #
 
