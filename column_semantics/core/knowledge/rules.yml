@@ -3,6 +3,7 @@
 - label: identifier
   description: Unique identifier column
   priority: 100
+  min_signals: 1
   when:
     any:
       - signal: abbreviation
@@ -20,6 +21,7 @@
 - label: date
   description: Date column
   priority: 90
+  min_signals: 1
   when:
     any:
       - signal: date
@@ -33,6 +35,7 @@
 - label: timestamp
   description: Timestamp column
   priority: 95
+  min_signals: 1
   when:
     any:
       - signal: abbreviation
@@ -50,6 +53,7 @@
 - label: monetary_amount
   description: Monetary amount column
   priority: 90
+  min_signals: 2
   when:
     all:
       - signal: currency
@@ -66,6 +70,7 @@
 - label: metric
   description: Numeric business metric
   priority: 80
+  min_signals: 2
   when:
     any:
       - signal: abbreviation
@@ -82,6 +87,7 @@
 - label: flag
   description: Boolean flag column
   priority: 70
+  min_signals: 2
   when:
     any:
       - signal: abbreviation
@@ -99,6 +105,7 @@
 - label: category
   description: Categorical column
   priority: 60
+  min_signals: 2
   when:
     any:
       - signal: abbreviation
@@ -116,6 +123,7 @@
 - label: text
   description: Free text column
   priority: 50
+  min_signals: 1
   when:
     any:
       - signal: abbreviation
@@ -131,6 +139,7 @@
 - label: geo_country
   description: Country column
   priority: 85
+  min_signals: 1
   when:
     any:
       - signal: abbreviation
@@ -145,6 +154,7 @@
 - label: geo_city
   description: City column
   priority: 80
+  min_signals: 1
   when:
     any:
       - signal: abbreviation
@@ -162,6 +172,7 @@
 - label: email
   description: Email address column
   priority: 85
+  min_signals: 1
   when:
     any:
       - signal: abbreviation
@@ -174,6 +185,7 @@
 - label: phone
   description: Phone number column
   priority: 80
+  min_signals: 1
   when:
     any:
       - signal: abbreviation

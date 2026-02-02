@@ -34,9 +34,6 @@ class RulesEngine:
         *,
         signals: List[Dict[str, Any]],
     ) -> List[SemanticHypothesis]:
-        """
-        Evaluate all rules against the provided signals.
-        """
         hypotheses: List[SemanticHypothesis] = []
 
         for rule in self._rules:
@@ -44,6 +41,10 @@ class RulesEngine:
                 continue
 
             evidence = self._collect_evidence(rule, signals)
+
+            min_signals = rule.get("min_signals")
+            if min_signals is not None and len(evidence) < min_signals:
+                continue
 
             hypotheses.append(
                 SemanticHypothesis(
