@@ -1,11 +1,12 @@
-"""Inference engine for column semantics detection."""
+"""
+Inference engine orchestrating semantic hypothesis generation.
+"""
 
 from __future__ import annotations
 
-from collections import defaultdict
-from typing import List, Dict, Any, DefaultDict
+from typing import Any, Dict, List
 
-from column_semantics.core.engine.confidence_engine import ConfidenceEngine
+from column_semantics.core.engine.rules_engine import RulesEngine
 from column_semantics.core.models.output_models import (
     InferenceResult,
     SemanticHypothesis,
@@ -14,11 +15,18 @@ from column_semantics.core.models.output_models import (
 
 class InferenceEngine:
     """
-    Combines semantic signals into high-level hypotheses.
+    Orchestrates semantic inference by delegating rule evaluation
+    and handling post-processing of hypotheses.
     """
 
-    def __init__(self) -> None:
-        self.confidence_engine = ConfidenceEngine()
+    def __init__(
+        self,
+        *,
+        rules_engine: RulesEngine,
+    ) -> None:
+        self._rules_engine = rules_engine
+
+    # -------------------- public API -------------------- #
 
     def infer(
         self,
@@ -26,73 +34,37 @@ class InferenceEngine:
         column_name: str,
         signals: List[Dict[str, Any]],
     ) -> InferenceResult:
-        """Infers semantic hypotheses from signals for a given column."""
-        hypotheses: List[SemanticHypothesis] = []
+        """
+        Infer semantic hypotheses for a column using declarative rules.
+        """
+        hypotheses = self._rules_engine.evaluate(signals=signals)
 
-        grouped = self._group_by_type(signals)
-
-        self._infer_monetary(hypotheses, grouped)
-        self._infer_date(hypotheses, grouped)
-        self._infer_identifier(hypotheses, grouped)
-
-        hypotheses.sort(key=lambda h: h.confidence, reverse=True)
+        hypotheses = self._post_process(hypotheses)
 
         return InferenceResult(
             column_name=column_name,
             hypotheses=hypotheses,
         )
 
-    # ---------------- inference rules ---------------- #
+    # -------------------- post-processing -------------------- #
 
-    def _infer_monetary(
-        self,
+    @staticmethod
+    def _post_process(
         hypotheses: List[SemanticHypothesis],
-        grouped: Dict[str, List[Dict[str, Any]]],
-    ) -> None:
-        if not grouped.get("currency") or not grouped.get("abbreviation"):
-            return
+    ) -> List[SemanticHypothesis]:
+        """
+        Sort, deduplicate and prioritize hypotheses.
+        """
+        # Deduplicate by label keeping highest confidence
+        unique: dict[str, SemanticHypothesis] = {}
 
-        evidence = grouped["currency"] + grouped["abbreviation"]
-        hypotheses.append(self._build_hypothesis("monetary_amount", evidence))
+        for hypothesis in hypotheses:
+            existing = unique.get(hypothesis.label)
+            if existing is None or hypothesis.confidence > existing.confidence:
+                unique[hypothesis.label] = hypothesis
 
-    def _infer_date(
-        self,
-        hypotheses: List[SemanticHypothesis],
-        grouped: Dict[str, List[Dict[str, Any]]],
-    ) -> None:
-        if not grouped.get("date"):
-            return
-
-        hypotheses.append(self._build_hypothesis("date", grouped["date"]))
-
-    def _infer_identifier(
-        self,
-        hypotheses: List[SemanticHypothesis],
-        grouped: Dict[str, List[Dict[str, Any]]],
-    ) -> None:
-        for role in grouped.get("role", []):
-            if role.get("role") == "identifier":
-                hypotheses.append(self._build_hypothesis("identifier", [role]))
-
-    # ---------------- helpers ---------------- #
-
-    def _build_hypothesis(
-        self,
-        label: str,
-        evidence: List[Dict[str, Any]],
-    ) -> SemanticHypothesis:
-        return SemanticHypothesis(
-            label=label,
-            evidence=evidence,
-            confidence=self.confidence_engine.score(evidence),
+        return sorted(
+            unique.values(),
+            key=lambda h: h.confidence,
+            reverse=True,
         )
-
-    def _group_by_type(
-        self, signals: List[Dict[str, Any]]
-    ) -> DefaultDict[str, List[Dict[str, Any]]]:
-        grouped: DefaultDict[str, List[Dict[str, Any]]] = defaultdict(list)
-
-        for signal in signals:
-            grouped[signal["type"]].append(signal)
-
-        return grouped
