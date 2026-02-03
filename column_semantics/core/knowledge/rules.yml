@@ -119,17 +119,16 @@
         in: [count, qty, number, flag, is]
 
   recommended_treatment:
-  - parse_as_decimal
-  - attach_currency_metadata
-  - avoid_float_precision
-  - enable_sum_aggregation
+    - parse_as_decimal
+    - attach_currency_metadata
+    - avoid_float_precision
+    - enable_sum_aggregation
 
   expected_conditions:
     - values_should_be_numeric
     - currency_should_be_consistent
     - handle_negative_values_appropriately
     - enforce_value_ranges_if_applicable
-|
 
 # ---------------- METRICS ---------------- #
 
