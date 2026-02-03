@@ -10,7 +10,7 @@ class Tokenizer:
     """
 
     _SNAKE_SPLIT = re.compile(r"_+")
-    _CAMEL_SPLIT = re.compile(r"(?<!^)(?=[A-Z][a-z])")
+    _CAMEL_SPLIT = re.compile(r"(?<!^)(?=[A-Z][a-z]|[A-Z][0-9]|[0-9][A-Z])")
 
     def tokenize(self, column_name: str) -> List[str]:
         """
@@ -31,4 +31,4 @@ class Tokenizer:
             # Then split camelCase / PascalCase
             tokens.extend(self._CAMEL_SPLIT.split(part))
 
-        return [t for t in tokens if t]
+        return [t for t in tokens if t and not t.isspace()]
