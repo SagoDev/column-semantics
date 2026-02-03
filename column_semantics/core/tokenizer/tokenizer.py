@@ -10,7 +10,7 @@ class Tokenizer:
     """
 
     _SNAKE_SPLIT = re.compile(r"_+")
-    _CAMEL_SPLIT = re.compile(r"(?<!^)(?=[A-Z])")
+    _CAMEL_SPLIT = re.compile(r"(?<!^)(?=[A-Z][a-z])")
 
     def tokenize(self, column_name: str) -> List[str]:
         """
