@@ -21,6 +21,9 @@ class Normalizer:
         normalized: List[str] = []
 
         for token in tokens:
+            if token is None:
+                continue
+                
             clean = token.strip().lower()
 
             if not clean:
