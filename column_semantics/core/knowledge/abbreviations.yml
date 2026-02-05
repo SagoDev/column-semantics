@@ -7,6 +7,11 @@ amt:
   data_type: "decimal"
   role: "metric"
 
+amount:
+  meaning: "amount"
+  data_type: "decimal"
+  role: "metric"
+
 qty:
   meaning: "quantity"
   data_type: "integer"
@@ -20,6 +25,16 @@ cnt:
 dt:
   meaning: "date"
   data_type: "date"
+
+is:
+  meaning: "boolean flag"
+  data_type: "boolean"
+  role: "flag"
+
+is_active:
+  meaning: "boolean flag"
+  data_type: "boolean"
+  role: "flag"
 
 ts:
   meaning: "timestamp"
