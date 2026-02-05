@@ -12,7 +12,10 @@ foreign_key:
 metric:
   description: "Numeric value used for measurement or aggregation"
 
-flag:
+flag: [is, has, active, enabled, deleted]
+
+is_active:
+  meaning: "boolean flag"
   description: "Boolean indicator"
   common_patterns:
     - "is_"
