@@ -3,7 +3,6 @@ tests/
 test_files/
 run_tests.py
 pytest.ini
-main.py
 
 # Archivos de compilación y empaquetado
 build/
