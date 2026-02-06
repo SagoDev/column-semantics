@@ -4,6 +4,7 @@ from .engine import InferenceEngine, ConfidenceEngine
 from .analyzer import ColumnAnalyzer
 from .loader import KnowledgeBase
 from .models import InferenceResult, Detection
+from .results import ColumnAnalysisResults
 from .tokenizer import Tokenizer
 from .normalizer import Normalizer
 from .detectors import (
@@ -20,6 +21,7 @@ __all__ = [
     "ColumnAnalyzer",
     "KnowledgeBase",
     "InferenceResult",
+    "ColumnAnalysisResults",
     "Tokenizer",
     "Normalizer",
     "AbbreviationDetector",
