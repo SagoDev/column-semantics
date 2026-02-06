@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Dict, List
 
 from column_semantics.core.tokenizer import Tokenizer
@@ -77,8 +78,53 @@ class ColumnAnalyzer:
     def analyze_many(
         self,
         columns: List[str],
-    ) -> List[InferenceResult]:
+        *,
+        include_summary: bool = False,
+        confidence_threshold: float = 0.0,
+    ) -> dict[str, Any]:
         """
-        Analyze multiple column names and return semantic recommendations.
+        Analyze multiple column names with additional options for batch processing.
+
+        Args:
+            columns: List of column names to analyze
+            include_summary: If True, include summary statistics
+            confidence_threshold: Minimum confidence threshold for hypotheses
+
+        Returns:
+            Dictionary with analysis results and optional summary
         """
-        return [self.analyze(column) for column in columns]
+        results = [self.analyze(column) for column in columns]
+
+        response = {
+            "columns": {col: result for col, result in zip(columns, results)},
+            "total_columns": len(columns),
+            "processed_at": str(Path(__file__).stat().st_mtime),
+        }
+
+        if include_summary:
+            all_hypotheses = []
+            for result in results:
+                filtered_hypotheses = [
+                    h for h in result.hypotheses if h.confidence >= confidence_threshold
+                ]
+                all_hypotheses.extend(filtered_hypotheses)
+
+            # Count by semantic type
+            semantic_counts = {}
+            for hypothesis in all_hypotheses:
+                semantic_counts[hypothesis.label] = (
+                    semantic_counts.get(hypothesis.label, 0) + 1
+                )
+
+            response["summary"] = {
+                "total_hypotheses": len(all_hypotheses),
+                "semantic_types_found": list(semantic_counts.keys()),
+                "semantic_distribution": semantic_counts,
+                "average_confidence": (
+                    sum(h.confidence for h in all_hypotheses) / len(all_hypotheses)
+                    if all_hypotheses
+                    else 0.0
+                ),
+            }
+
+        return response
