@@ -8,26 +8,41 @@ from .utils import *
 from .core import *
 
 
-def analyze_columns(columns: list[str], **kwargs) -> dict[str, Any]:
+def analyze_columns(columns: list[str], **kwargs) -> ColumnAnalysisResults:
     """
-    Analyze a list of column names and return semantic recommendations.
-
-    This is a convenience function that provides easy access to column analysis.
-
+    Analyze columns and return user-friendly results object.
+    
+    This function provides the easiest access to column analysis results
+    with convenient methods and properties.
+    
     Args:
         columns: List of column names to analyze
-        **kwargs: Additional options passed to analyze_many method
-
+        **kwargs: Additional options passed to analysis
+        
     Returns:
-        Dictionary with analysis results for each column
-
+        ColumnAnalysisResults object with convenient access methods
+        
     Example:
         >>> from column_semantics import analyze_columns
         >>> columns = ["user_id", "created_at", "amount_usd", "is_active"]
         >>> results = analyze_columns(columns, include_summary=True)
-        >>> print(results["summary"]["semantic_distribution"])
+        >>> 
+        >>> # Easy access to statistics
+        >>> print(f"Analyzed {results.count} columns")
+        >>> print(f"Top hypothesis: {results.top_hypothesis.label}")
+        >>> 
+        >>> # Easy iteration
+        >>> for col in results:
+        ...     best = results.get_best_for_column(col)
+        ...     if best:
+        ...         print(f"{col}: {best.label}")
+        >>> 
+        >>> # Summary text
+        >>> print(results.get_summary_text())
     """
-    from .core.analyzer import ColumnAnalyzer
-
+    # Use local import to avoid circular dependencies
+    from .core.results import ColumnAnalysisResults
+    
     analyzer = ColumnAnalyzer()
-    return analyzer.analyze_many(columns, **kwargs)
+    raw_results = analyzer.analyze_many(columns, **kwargs)
+    return ColumnAnalysisResults(raw_results)
