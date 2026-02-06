@@ -28,3 +28,23 @@ timestamp:
     - "_at"
     - "_ts"
     - "_dt"
+
+# Entity identifiers
+user: identifier
+customer: identifier
+account: identifier
+transaction: identifier
+order: identifier
+product: identifier
+
+# Contact info
+email: contact
+phone: contact
+address: contact
+
+# Status categories  
+status: category
+type: category
+category: category
+level: category
+group: category

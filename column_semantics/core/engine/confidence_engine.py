@@ -11,18 +11,20 @@ class ConfidenceEngine:
     """
 
     DEFAULT_WEIGHTS: Dict[str, float] = {
-        "abbreviation": 0.30,
-        "currency": 0.35,
-        "date": 0.40,
-        "role": 0.25,
-        "data_type": 0.20,
+        "abbreviation": 0.50,
+        "currency": 0.45,
+        "date": 0.60,
+        "role": 0.40,
+        "data_type": 0.30,
     }
 
     COMBINATION_BONUS: Dict[frozenset[str], float] = {
-        frozenset({"abbreviation", "currency"}): 0.20,
-        frozenset({"role", "data_type"}): 0.15,
-        frozenset({"date", "data_type"}): 0.10,
-    }
+        frozenset({"abbreviation", "currency"}): 0.25,
+        frozenset({"role", "data_type"}): 0.20,
+        frozenset({"date", "data_type"}): 0.15,
+        frozenset({"abbreviation", "role"}): 0.30,
+        frozenset({"abbreviation", "date"}): 0.25,
+        }
 
     MAX_CONFIDENCE: float = 0.95
 

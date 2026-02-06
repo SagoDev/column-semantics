@@ -144,7 +144,7 @@ class ColumnAnalysisResults:
     def get_summary_text(self) -> str:
         """Get a human-readable summary text."""
         lines = [
-            "📊 Analysis Summary",
+            "Analysis Summary",
             f"Columns analyzed: {self.count}",
             f"Total hypotheses: {self.total_hypotheses}",
             f"Semantic types found: {len(self.semantic_types)}",

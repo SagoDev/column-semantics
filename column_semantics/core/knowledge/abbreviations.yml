@@ -55,3 +55,123 @@ min:
 max:
   meaning: "maximum"
   role: "metric"
+
+# Financial terms
+price:
+  meaning: "price"
+  data_type: "decimal"
+  role: "metric"
+
+balance:
+  meaning: "balance"
+  data_type: "decimal"
+  role: "metric"
+
+total:
+  meaning: "total"
+  data_type: "decimal"
+  role: "metric"
+
+cost:
+  meaning: "cost"
+  data_type: "decimal"
+  role: "metric"
+
+revenue:
+  meaning: "revenue"
+  data_type: "decimal"
+  role: "metric"
+
+# User/entity terms
+user:
+  meaning: "user"
+  role: "identifier"
+
+customer:
+  meaning: "customer"
+  role: "identifier"
+
+account:
+  meaning: "account"
+  role: "identifier"
+
+transaction:
+  meaning: "transaction"
+  role: "identifier"
+
+order:
+  meaning: "order"
+  role: "identifier"
+
+product:
+  meaning: "product"
+  role: "identifier"
+
+# Contact terms
+email:
+  meaning: "email address"
+  data_type: "string"
+
+phone:
+  meaning: "phone number"
+  data_type: "string"
+
+address:
+  meaning: "address"
+  data_type: "string"
+
+# Status terms
+status:
+  meaning: "status"
+  role: "category"
+
+type:
+  meaning: "type"
+  role: "category"
+
+category:
+  meaning: "category"
+  role: "category"
+
+# Date/time specific terms
+timestamp:
+  meaning: "timestamp"
+  data_type: "timestamp"
+  role: "timestamp"
+
+created_at:
+  meaning: "creation timestamp"
+  data_type: "timestamp"
+  role: "timestamp"
+
+updated_at:
+  meaning: "update timestamp"
+  data_type: "timestamp"
+  role: "timestamp"
+
+date:
+  meaning: "date"
+  data_type: "date"
+
+time:
+  meaning: "time"
+  data_type: "time"
+
+# Financial specific terms
+account_number:
+  meaning: "account number"
+  role: "identifier"
+  data_type: "string"
+
+debit_credit:
+  meaning: "debit credit indicator"
+  role: "category"
+
+reference_id:
+  meaning: "reference identifier"
+  role: "identifier"
+
+currency:
+  meaning: "currency code"
+  role: "category"
+  data_type: "string"
