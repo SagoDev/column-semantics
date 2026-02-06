@@ -1,6 +1,4 @@
-"""
-Rules engine for semantic inference based on declarative rules.
-"""
+"""Rules engine for semantic inference based on declarative rules."""
 
 from __future__ import annotations
 
@@ -125,11 +123,31 @@ class RulesEngine:
             if signal.get("type") != signal_type:
                 continue
 
-            if "equals" in condition and signal.get("value") == condition["equals"]:
-                return True
+            if "equals" in condition:
+                if signal.get("value") == condition["equals"]:
+                    return True
+                continue
 
-            if "in" in condition and signal.get("value") in condition["in"]:
-                return True
+            if "in" in condition:
+                # Check multiple possible fields for the value, prioritized by signal type
+                signal_value = None
+                if signal_type == "role":
+                    field_priority = ["role", "token", "meaning", "value"]
+                elif signal_type == "currency":
+                    field_priority = ["currency", "token", "meaning", "value"]
+                elif signal_type == "abbreviation":
+                    field_priority = ["token", "meaning", "role", "value"]
+                else:
+                    field_priority = ["token", "role", "currency", "meaning", "value"]
+                    
+                for field in field_priority:
+                    if field in signal:
+                        signal_value = signal[field]
+                        break
+                        
+                if signal_value and signal_value in condition["in"]:
+                    return True
+                continue
 
             if len(condition) == 1:  # only 'signal'
                 return True
