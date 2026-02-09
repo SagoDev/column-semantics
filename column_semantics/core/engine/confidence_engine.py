@@ -8,7 +8,7 @@ from typing import Dict, List, Any
 class ConfidenceEngine:
     """
     Computes confidence scores for semantic hypotheses based on signal patterns.
-    
+
     Uses weighted scoring system with combination bonuses for comprehensive
     signal type coverage.
     """
@@ -20,7 +20,7 @@ class ConfidenceEngine:
         "role": 0.40,
         "data_type": 0.30,
     }
-    
+
     # Additional scoring constants for better testability
     BASE_WEIGHT_ABBR = 0.50
     BASE_WEIGHT_CURRENCY = 0.45
@@ -39,18 +39,18 @@ class ConfidenceEngine:
     def score(self, signals: List[Dict[str, Any]]) -> float:
         """
         Compute confidence score based on detected signals.
-        
+
         Uses weighted scoring with:
         - Signal type weights for base scoring
         - Combination bonuses for signal diversity
-        
+
         The scoring formula:
         base_score = Σ(weight_i × count_i) for each signal type
         final_score = base_score + combination_bonus
-        
+
         Args:
             signals: List of signal dictionaries with 'type' field
-            
+
         Returns:
             float: Confidence score
         """
@@ -72,7 +72,9 @@ class ConfidenceEngine:
                 base_score += weight
 
         # Apply combination bonuses for signal diversity
-        combination_bonus = self._calculate_combination_bonus(signal_types, signal_counts)
+        combination_bonus = self._calculate_combination_bonus(
+            signal_types, signal_counts
+        )
 
         # Final score with conditional capping
         raw_score = base_score + combination_bonus
@@ -80,22 +82,24 @@ class ConfidenceEngine:
             final_score = min(raw_score, self.MAX_CONFIDENCE)
         else:
             final_score = raw_score
-        
+
         return final_score
 
-    def _calculate_combination_bonus(self, signal_types: set, signal_counts: Dict[str, int]) -> float:
+    def _calculate_combination_bonus(
+        self, signal_types: set, signal_counts: Dict[str, int]
+    ) -> float:
         """
         Calculate combination bonus based on signal type diversity.
-        
+
         Bonus calculation:
         - Check if signal types match any predefined valuable combinations
         - Award points for diversity in signal patterns
         """
         bonus = 0.0
-        
+
         # Award bonus for matching valuable combinations
         for combo, combo_bonus in self.COMBINATION_BONUS.items():
             if combo.issubset(signal_types):
                 bonus += combo_bonus
-            
+
         return bonus

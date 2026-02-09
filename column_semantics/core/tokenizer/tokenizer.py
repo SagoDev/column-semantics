@@ -24,7 +24,9 @@ class Tokenizer:
     """
 
     _SNAKE_SPLIT = re.compile(r"_+")
-    _CAMEL_SPLIT = re.compile(r"(?<=[a-z])(?=[A-Z])|(?=[A-Z][a-z]|[A-Z][0-9]|[0-9][A-Z])")
+    _CAMEL_SPLIT = re.compile(
+        r"(?<=[a-z])(?=[A-Z])|(?=[A-Z][a-z]|[A-Z][0-9]|[0-9][A-Z])"
+    )
     _NUMBER_SPLIT = re.compile(r"(?<=[a-zA-Z])(?=[0-9])|(?<=[0-9])(?=[a-zA-Z])")
 
     def tokenize(self, column_name: str) -> List[str]:

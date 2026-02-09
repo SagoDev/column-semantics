@@ -139,12 +139,12 @@ class RulesEngine:
                     field_priority = ["token", "meaning", "role", "value"]
                 else:
                     field_priority = ["token", "role", "currency", "meaning", "value"]
-                    
+
                 for field in field_priority:
                     if field in signal:
                         signal_value = signal[field]
                         break
-                        
+
                 if signal_value and signal_value in condition["in"]:
                     return True
                 continue
