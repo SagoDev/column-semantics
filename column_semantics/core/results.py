@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+from datetime import datetime
 from typing import Any, Dict, List
 from column_semantics.core.models import InferenceResult, SemanticHypothesis
 
@@ -191,3 +193,73 @@ class ColumnAnalysisResults:
     def __repr__(self) -> str:
         """Detailed representation."""
         return f"ColumnAnalysisResults(count={self.count}, total_hypotheses={self.total_hypotheses}, semantic_types={self.semantic_types})"
+
+    # ---------------- JSON Serialization ---------------- #
+
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert results to a dictionary format suitable for JSON serialization.
+
+        Returns:
+            Dictionary containing analysis results with metadata, summary, and column details
+        """
+        # Build metadata section
+        metadata = {
+            "total_columns": self.count,
+            "total_hypotheses": self.total_hypotheses,
+            "semantic_types_found": self.semantic_types,
+            "average_confidence": round(self.average_confidence, 3),
+        }
+
+        # Build summary section
+        summary = {
+            "semantic_distribution": self.semantic_distribution,
+            "high_confidence_count": len(self.high_confidence_hypotheses),
+            "ambiguous_columns": [],
+        }
+
+        # Build columns section with best hypotheses
+        columns = {}
+        for col_name, result in self._columns.items():
+            best_hypothesis = result.best
+            if best_hypothesis:
+                columns[col_name] = {
+                    "best_hypothesis": {
+                        "label": best_hypothesis.label,
+                        "confidence": round(best_hypothesis.confidence, 3),
+                        "rule": {
+                            "label": best_hypothesis.rule.label,
+                            "description": best_hypothesis.rule.description,
+                            "priority": best_hypothesis.rule.priority,
+                        },
+                        "recommendations": best_hypothesis.rule.recommended_treatment,
+                        "is_ambiguous": result.is_ambiguous,
+                    }
+                }
+
+                # Track ambiguous columns
+                if result.is_ambiguous:
+                    summary["ambiguous_columns"].append(col_name)
+            else:
+                # Handle columns with no hypotheses
+                columns[col_name] = {"best_hypothesis": None, "is_ambiguous": False}
+
+        return {"metadata": metadata, "summary": summary, "columns": columns}
+
+    def to_json(self, indent: int = 2) -> str:
+        """
+        Convert results to JSON string.
+
+        Args:
+            indent: Number of spaces for JSON indentation (default: 2)
+
+        Returns:
+            JSON string containing analysis results
+
+        Raises:
+            TypeError: If results contain non-serializable data
+        """
+        try:
+            return json.dumps(self.to_dict(), indent=indent, ensure_ascii=False)
+        except (TypeError, ValueError) as e:
+            raise TypeError(f"Failed to serialize results to JSON: {e}") from e
