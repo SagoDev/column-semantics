@@ -2,7 +2,7 @@
 
 Semantic inference of column meanings for data engineering workflows.
 
-`column-semantics` is a Python library designed to help data engineers understand datasets with little or no documentation. By analyzing column names, it infers their most likely meaning, expected data type, and typical role in a data model using deterministic rules and domain knowledge.
+`column-semantics` is a Python tool designed to help data engineers understand datasets with little or no documentation. By analyzing column names, it infers their most likely meaning, expected data type, and typical role in a data model using deterministic rules and domain knowledge.
 
 This project is intentionally pragmatic: no black-box machine learning, no mandatory LLMs — just explainable heuristics grounded in real-world data engineering conventions.
 
