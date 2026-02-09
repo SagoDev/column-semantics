@@ -207,6 +207,7 @@ class ColumnAnalysisResults:
         metadata = {
             "total_columns": self.count,
             "total_hypotheses": self.total_hypotheses,
+            "analysis_timestamp": datetime.now().isoformat(),
             "semantic_types_found": self.semantic_types,
             "average_confidence": round(self.average_confidence, 3),
         }
