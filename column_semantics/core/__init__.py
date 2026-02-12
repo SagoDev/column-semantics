@@ -4,7 +4,7 @@ from .engine import InferenceEngine, ConfidenceEngine
 from .analyzer import ColumnAnalyzer
 from .loader import KnowledgeBase
 from .models import InferenceResult, Detection
-from .results import ColumnAnalysisResults
+from .analysis import ColumnAnalysisResults
 from .tokenizer import Tokenizer
 from .normalizer import Normalizer
 from .detectors import (
