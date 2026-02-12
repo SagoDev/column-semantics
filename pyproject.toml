@@ -29,6 +29,7 @@ classifiers = [
 
 [project.dependencies]
 pyyaml = ">=6.0"
+reportlab = ">=4.0.0"
 
 
 [project.optional-dependencies]
