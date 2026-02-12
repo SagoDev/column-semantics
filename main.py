@@ -1,155 +1,100 @@
-"""
-Column Semantics - Usage Example
+"""Column Semantics - Main Launcher
 
-This example demonstrates how to use the column_semantics library
-to analyze and understand the semantic meaning of column names.
+This script serves as a launcher for running different examples
+of column_semantics library.
 """
 
-import column_semantics as cs
+import importlib.util
+from pathlib import Path
+
+
+def run_example_file(filename: str):
+    """Run an example file by importing and executing its main function."""
+    examples_dir = Path(__file__).parent / "examples"
+    file_path = examples_dir / filename
+
+    # Load the module from file
+    spec = importlib.util.spec_from_file_location("example_module", file_path)
+    if spec is None:
+        raise ImportError(f"Could not load spec from {file_path}")
+
+    module = importlib.util.module_from_spec(spec)
+
+    # Execute the module
+    if spec.loader is None:
+        raise ImportError(f"Could not get loader for {file_path}")
+
+    spec.loader.exec_module(module)
+
+    # Run the main function if it exists
+    if hasattr(module, "main"):
+        module.main()
 
 
 def main():
-    """Main example demonstrating column analysis features."""
+    """Main launcher for examples."""
 
-    # Example 1: E-commerce dataset columns
-    print("=== E-commerce Dataset Analysis ===")
-    ecommerce_columns = [
-        "user_id",
-        "product_id",
-        "order_id",
-        "quantity",
-        "price_usd",
-        "created_at",
-        "updated_at",
-        "is_active",
-        "customer_email",
-        "shipping_address",
-        "payment_method",
-        "order_status",
-    ]
+    print("Column Semantics - Example Launcher")
+    print("=" * 40)
+    print("\nAvailable examples:")
+    print("1. Basic Analysis - Learn fundamental usage")
+    print("2. Report Generation - Generate PDF, JSON, and text reports")
+    print("3. Practical Recommendations - Data engineering best practices")
+    print("4. Complete Analysis - Comprehensive example with all features")
+    print("5. Run All Examples - Execute all examples sequentially")
+    print("0. Exit")
 
-    ecommerce_results = cs.analyze_columns(ecommerce_columns, include_summary=True)
+    while True:
+        try:
+            choice = input("\nSelect an example (1-5, 0 to exit): ").strip()
 
-    print("Column analysis results:")
-    for column in ecommerce_results:
-        best_match = ecommerce_results.get_best_for_column(column)
-        if best_match:
-            confidence = best_match.confidence * 100
-            print(f"  {column}: {best_match.label} ({confidence:.1f}% confidence)")
-    print()
+            if choice == "0":
+                print("Goodbye!")
+                break
+            elif choice == "1":
+                print("\n--- Running Basic Analysis Example ---")
+                run_example_file("01_basic_analysis.py")
+            elif choice == "2":
+                print("\n--- Running Report Generation Example ---")
+                run_example_file("02_report_generation.py")
+            elif choice == "3":
+                print("\n--- Running Practical Recommendations Example ---")
+                run_example_file("03_practical_recommendations.py")
+            elif choice == "4":
+                print("\n--- Running Complete Analysis Example ---")
+                run_example_file("04_complete_analysis.py")
+            elif choice == "5":
+                print("\n--- Running All Examples ---")
 
-    # Example 2: Financial dataset columns
-    print("=== Financial Dataset Analysis ===")
-    financial_columns = [
-        "account_number",
-        "balance",
-        "transaction_date",
-        "amount",
-        "currency",
-        "debit_credit",
-        "reference_id",
-        "category",
-    ]
+                examples = [
+                    ("Basic Analysis", "01_basic_analysis.py"),
+                    ("Report Generation", "02_report_generation.py"),
+                    ("Practical Recommendations", "03_practical_recommendations.py"),
+                    ("Complete Analysis", "04_complete_analysis.py"),
+                ]
 
-    financial_results = cs.analyze_columns(financial_columns)
+                for name, filename in examples:
+                    print(f"\n{'='*50}")
+                    print(f"Running {name}")
+                    print("=" * 50)
 
-    print("Financial columns identified:")
-    for column in financial_results:
-        best_match = financial_results.get_best_for_column(column)
-        if best_match and best_match.confidence > 0.7:
-            print(f"  [HIGH] {column} -> {best_match.label}")
-    print()
+                    try:
+                        run_example_file(filename)
+                        print(f"✓ {name} completed successfully")
+                    except Exception as e:
+                        print(f"✗ Error in {name}: {e}")
 
-    # Example 3: Get summary text
-    print("=== Analysis Summary ===")
-    print(ecommerce_results.get_summary_text())
-    print()
+                    input("\nPress Enter to continue to next example...")
 
-    # Example 4: Show recommendations for high-confidence columns
-    print("=== Recommendations ===")
-    print("Treatment recommendations for high-confidence columns:")
-    for column in ecommerce_columns:
-        column_result = ecommerce_results[column]
-        if column_result.best and column_result.best.confidence > 0.7:
-            recommendations = column_result.recommendations
-            if recommendations:
-                print(f"  {column}:")
-                for rec in recommendations:
-                    print(f"    - {rec}")
+                print("\n✓ All examples completed!")
             else:
-                print(f"  {column}: No specific recommendations")
-    print()
+                print("Invalid choice. Please enter 1-5, or 0 to exit.")
 
-    # Example 5: Show expected conditions
-    print("=== Expected Conditions ===")
-    print("Data quality expectations for high-confidence columns:")
-    for column in ecommerce_columns:
-        column_result = ecommerce_results[column]
-        if column_result.best and column_result.best.confidence > 0.7:
-            conditions = column_result.expected_conditions
-            if conditions:
-                print(f"  {column}:")
-                for condition in conditions[:3]:  # Show first 3 conditions
-                    print(f"    - {condition}")
-                if len(conditions) > 3:
-                    print(f"    - ... and {len(conditions) - 3} more")
-            else:
-                print(f"  {column}: No specific conditions")
-    print()
-
-    # Example 6: Recommendations for financial dataset
-    print("=== Financial Dataset Recommendations ===")
-    print("Key recommendations for financial data:")
-    for column in financial_columns:
-        if column in financial_results:
-            column_result = financial_results[column]
-            if column_result.best and column_result.best.confidence > 0.6:
-                recommendations = column_result.recommendations
-                if recommendations:
-                    print(f"  {column} ({column_result.best.label}):")
-                    for rec in recommendations[:2]:  # Show top 2 recommendations
-                        print(f"    - {rec}")
-    print()
-
-    # Example 7: Access statistics
-    print("=== Statistics ===")
-    print(f"Total hypotheses tested: {ecommerce_results.total_hypotheses}")
-    print(f"Average confidence: {ecommerce_results.average_confidence:.2f}")
-    print(
-        f"High confidence matches: {len(ecommerce_results.high_confidence_hypotheses)}"
-    )
-    print(f"Semantic types found: {len(ecommerce_results.semantic_types)}")
-
-    # Example 8: Practical recommendations usage
-    print("=== Practical Data Engineering Tips ===")
-    print("Based on the analysis, here are actionable recommendations:")
-
-    # Primary key columns
-    id_columns = ecommerce_results.get_columns_with_type("identifier")
-    if id_columns:
-        print(f"  Primary Key Candidates: {', '.join(id_columns)}")
-        print("    -> Consider these for primary keys or foreign key relationships")
-
-    # Monetary columns
-    monetary_columns = ecommerce_results.get_columns_with_type("monetary_amount")
-    if monetary_columns:
-        print(f"  Monetary Columns: {', '.join(monetary_columns)}")
-        print("    -> Use DECIMAL type, avoid FLOAT for precision")
-        print("    -> Store currency metadata separately if multi-currency")
-
-    # Date columns
-    date_columns = ecommerce_results.get_columns_with_type("date")
-    if date_columns:
-        print(f"  Date Columns: {', '.join(date_columns)}")
-        print("    -> Use ISO 8601 format (YYYY-MM-DD)")
-        print("    -> Consider timezone handling for created_at/updated_at")
-
-    # Email columns
-    email_columns = ecommerce_results.get_columns_with_type("email")
-    if email_columns:
-        print(f"  Email Columns: {', '.join(email_columns)}")
-        print("    -> Implement email validation")
-        print("    -> Consider encryption for privacy compliance")
+        except KeyboardInterrupt:
+            print("\n\nGoodbye!")
+            break
+        except Exception as e:
+            print(f"Error: {e}")
 
 
 if __name__ == "__main__":
